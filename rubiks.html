@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        .W {
+            background-color: grey;
+        }
+
+        .Y {
+            background-color: yellow;
+        }
+
+        .B {
+            background-color: blue;
+        }
+
+        .G {
+            background-color: green;
+        }
+
+        .R {
+            background-color: red;
+        }
+
+        .O {
+            background-color: orange;
+        }
+
+        .cube {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .break {
+            flex-basis: 100%;
+            height: 0;
+        }
+
+        .cube-side {
+            display: flex;
+            flex-wrap: wrap;
+            width: 220px;
+            height: 220px;
+        }
+
+        .cube-side>div {
+            width: 100px;
+            height: 100px;
+            margin: 5px;
+            text-align: center;
+            line-height: 75px;
+            font-size: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <button onclick="cube.u();cube.prettyPrintHorizontally()">U</button>
+    <button onclick="cube.u_();cube.prettyPrintHorizontally()">U'</button>
+    <button onclick="cube.d();cube.prettyPrintHorizontally()">D</button>
+    <button onclick="cube.d_();cube.prettyPrintHorizontally()">D'</button>
+    <button onclick="cube.r();cube.prettyPrintHorizontally()">R</button>
+    <button onclick="cube.r_();cube.prettyPrintHorizontally()">R'</button>
+    <button onclick="cube.l();cube.prettyPrintHorizontally()">L</button>
+    <button onclick="cube.l_();cube.prettyPrintHorizontally()">L'</button>
+    <button onclick="cube.f();cube.prettyPrintHorizontally()">F</button>
+    <button onclick="cube.f_();cube.prettyPrintHorizontally()">F'</button>
+    <button onclick="cube.b();cube.prettyPrintHorizontally()">B</button>
+    <button onclick="cube.b_();cube.prettyPrintHorizontally()">B'</button><br />
+    <button onclick="cube.rotateCubeLeft();cube.prettyPrintHorizontally()">Rotate Left</button>
+    <button onclick="cube.rotateCubeRight();cube.prettyPrintHorizontally()">Rotate Right</button>
+    <button onclick="cube.rotateCubeUp();cube.prettyPrintHorizontally()">Rotate Up</button>
+    <button onclick="cube.rotateCubeDown();cube.prettyPrintHorizontally()">Rotate Down</button><br />
+    <button onclick="document.getElementById('serialize').innerText = cube.serialize();">Serialize</button>
+    <div id="serialize"></div>
+    <button
+        onclick="cube = new Cube(document.getElementById('deserialize').value);cube.prettyPrintHorizontally();">Deserialize</button>
+    <input id="deserialize" /><br />
+    <button onclick="cube.prettyPrintVertically();">Fold Vertically</button>
+
+    <div id="cube" class="cube"></div>
+    <script>
+        class Cube {
+            constructor(serializedString) {
+                let split = serializedString.match(/\w{4}/g);
+                this.up = split[0].match(/\w/g);
+                this.down = split[1].match(/\w/g);
+                this.front = split[2].match(/\w/g);
+                this.back = split[3].match(/\w/g);
+                this.left = split[4].match(/\w/g);
+                this.right = split[5].match(/\w/g);
+            }
+
+            rotateArrayClockwise(array) {
+                let temp = array[0];
+                array[0] = array[2];
+                array[2] = array[3];
+                array[3] = array[1];
+                array[1] = temp;
+            }
+            rotateArrayCounterClockwise(array) {
+                this.rotateArrayClockwise(array);
+                this.rotateArrayClockwise(array);
+                this.rotateArrayClockwise(array);
+            }
+            rotateCubeRight() {
+                let temp = this.front;
+                this.front = this.left;
+                this.left = this.back;
+                this.back = this.right;
+                this.right = temp;
+                this.rotateArrayCounterClockwise(this.up);
+                this.rotateArrayClockwise(this.down);
+            }
+            rotateCubeLeft() {
+                this.rotateCubeRight();
+                this.rotateCubeRight();
+                this.rotateCubeRight();
+            }
+            rotateCubeUp() {
+                let temp = this.front;
+                this.front = this.down;
+                this.down = this.back;
+                this.back = this.up;
+                this.up = temp;
+                this.rotateArrayCounterClockwise(this.left);
+                this.rotateArrayClockwise(this.right);
+            }
+            rotateCubeDown() {
+                this.rotateCubeUp();
+                this.rotateCubeUp();
+                this.rotateCubeUp();
+            }
+            f() {
+                this.rotateArrayClockwise(this.front);
+                let temp3 = this.up[3];
+                let temp2 = this.up[2];
+                this.up[3] = this.left[1];
+                this.up[2] = this.left[3];
+                this.left[1] = this.down[0];
+                this.left[3] = this.down[1];
+                this.down[0] = this.right[2];
+                this.down[1] = this.right[0];
+                this.right[2] = temp3;
+                this.right[0] = temp2;
+            }
+            f_() {
+                this.f();
+                this.f();
+                this.f();
+            }
+            u() {
+                this.rotateCubeDown();
+                this.f();
+                this.rotateCubeUp();
+            }
+            u_() {
+                this.u();
+                this.u();
+                this.u();
+            }
+            d() {
+                this.rotateCubeUp();
+                this.f();
+                this.rotateCubeDown();
+            }
+            d_() {
+                this.d();
+                this.d();
+                this.d();
+            }
+            b() {
+                this.rotateCubeRight();
+                this.rotateCubeRight();
+                this.f();
+                this.rotateCubeRight();
+                this.rotateCubeRight();
+            }
+            b_() {
+                this.b();
+                this.b();
+                this.b();
+            }
+            l() {
+                this.rotateCubeRight();
+                this.f();
+                this.rotateCubeLeft();
+            }
+            l_() {
+                this.l();
+                this.l();
+                this.l();
+            }
+            r() {
+                this.rotateCubeLeft();
+                this.f();
+                this.rotateCubeRight();
+            }
+            r_() {
+                this.r();
+                this.r();
+                this.r();
+            }
+
+            printArray(array) {
+                return `<div class="cube-side">
+                            <div class="${array[0]}"></div>
+                            <div class="${array[1]}"></div>
+                            <div class="${array[2]}"></div>  
+                            <div class="${array[3]}"></div>
+                        </div>`
+            }
+            // the back side has to be mirrored horizontally when pretty printed (if we were to fold the cube differently, the mirroring needed to be different too)
+            printArrayMirroredHorizontally(array) {
+                return `<div class="cube-side">
+                            <div class="${array[2]}"></div>
+                            <div class="${array[3]}"></div>
+                            <div class="${array[0]}"></div>  
+                            <div class="${array[1]}"></div>
+                        </div>`
+            }
+
+            printArrayMirroredVertically(array) {
+                return `<div class="cube-side">
+                            <div class="${array[1]}"></div>
+                            <div class="${array[0]}"></div>
+                            <div class="${array[3]}"></div>  
+                            <div class="${array[2]}"></div>
+                        </div>`
+            }
+
+            prettyPrintHorizontally() {
+                document.getElementById("cube").innerHTML = `<div class="cube-side"></div>${this.printArray(this.up)}<div class="break"></div>
+                                                            ${this.printArray(this.left)}${this.printArray(this.front)}${this.printArray(this.right)}${this.printArrayMirroredHorizontally(this.back)}<div class="break"></div>
+                                                            <div class="cube-side"></div>${this.printArray(this.down)}
+                                                            `
+            }
+
+            prettyPrintVertically() {
+                document.getElementById("cube").innerHTML = `<div class="cube-side"></div>${this.printArray(this.up)}<div class="break"></div>
+                                                            ${this.printArray(this.left)}${this.printArray(this.front)}${this.printArray(this.right)}<div class="break"></div>
+                                                            <div class="cube-side"></div>${this.printArray(this.down)}<div class="break"></div>
+                                                            <div class="cube-side"></div>${this.printArrayMirroredVertically(this.back)}
+                                                            `
+            }
+
+            serialize() {
+                return this.up.join("") +
+                    this.down.join("") +
+                    this.front.join("") +
+                    this.back.join("") +
+                    this.left.join("") +
+                    this.right.join("");
+            }
+        }
+        let cube = new Cube('WWWWYYYYBBBBGGGGRRRROOOO');
+        cube.prettyPrintHorizontally();
+    </script>
+</body>
+
+</html>
