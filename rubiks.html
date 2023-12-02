@@ -77,7 +77,6 @@
     <button
         onclick="cube = new Cube(document.getElementById('deserialize').value);cube.prettyPrintHorizontally();">Deserialize</button>
     <input id="deserialize" /><br />
-    <button onclick="cube.prettyPrintVertically();">Fold Vertically</button>
 
     <div id="cube" class="cube"></div>
     <script>
@@ -98,6 +97,14 @@
                 array[2] = array[3];
                 array[3] = array[1];
                 array[1] = temp;
+            }
+            mirrorArrayHorizontally(array){
+                let temp = array[0];
+                array[0] = array[2];
+                array[2] = temp;
+                temp = array[1]
+                array[1] = array[3];
+                array[3] = temp;
             }
             rotateArrayCounterClockwise(array) {
                 this.rotateArrayClockwise(array);
@@ -122,7 +129,9 @@
                 let temp = this.front;
                 this.front = this.down;
                 this.down = this.back;
+                this.mirrorArrayHorizontally(this.down)
                 this.back = this.up;
+                this.mirrorArrayHorizontally(this.back)
                 this.up = temp;
                 this.rotateArrayCounterClockwise(this.left);
                 this.rotateArrayClockwise(this.right);
@@ -230,18 +239,19 @@
                         </div>`
             }
 
-            prettyPrintHorizontally() {
-                document.getElementById("cube").innerHTML = `<div class="cube-side"></div>${this.printArray(this.up)}<div class="break"></div>
-                                                            ${this.printArray(this.left)}${this.printArray(this.front)}${this.printArray(this.right)}${this.printArrayMirroredHorizontally(this.back)}<div class="break"></div>
-                                                            <div class="cube-side"></div>${this.printArray(this.down)}
-                                                            `
+            printArrayMirrored(array) {
+                return `<div class="cube-side">
+                            <div class="${array[3]}"></div>
+                            <div class="${array[2]}"></div>
+                            <div class="${array[1]}"></div>  
+                            <div class="${array[0]}"></div>
+                        </div>`
             }
 
-            prettyPrintVertically() {
+            prettyPrintHorizontally() {
                 document.getElementById("cube").innerHTML = `<div class="cube-side"></div>${this.printArray(this.up)}<div class="break"></div>
-                                                            ${this.printArray(this.left)}${this.printArray(this.front)}${this.printArray(this.right)}<div class="break"></div>
-                                                            <div class="cube-side"></div>${this.printArray(this.down)}<div class="break"></div>
-                                                            <div class="cube-side"></div>${this.printArrayMirroredVertically(this.back)}
+                                                            ${this.printArray(this.left)}${this.printArray(this.front)}${this.printArray(this.right)}${this.printArray(this.back)}<div class="break"></div>
+                                                            <div class="cube-side"></div>${this.printArray(this.down)}
                                                             `
             }
 
